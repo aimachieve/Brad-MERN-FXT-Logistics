@@ -1,0 +1,17 @@
+{
+  "name": "fxtlogistics-server",
+  "version": "1.0.0",
+  "description": "FXT Logistics",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "client": "npm start --prefix client",
+    "client-install": "npm install --prefix client",
+    "server": "nodemon server/server.js",
+    "start": "node server.js"
+  },
+  "author": "aimachieve",
+  "license": "MIT",
+  "dependencies": {
+    "concurrently": "^6.2.1"
+  }
+}
