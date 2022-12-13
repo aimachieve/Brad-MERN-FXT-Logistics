@@ -86,6 +86,57 @@ export default function CustomQuote() {
     }
   }
 
+  // parcel details
+  const [parcels, setParcels] = React.useState([
+    {
+      no: '',
+      weight: '',
+      length: '',
+      width: '',
+      height: ''
+    }
+  ])
+
+  const plusParcel = () => {
+    setParcels([...parcels, {
+      no: '',
+      weight: '',
+      length: '',
+      width: '',
+      height: ''
+    }])
+    console.log({ parcels })
+  }
+  const minusParcel = (index) => {
+    parcels.splice(index, 1)
+    setParcels([...parcels])
+  }
+  const handleChangeNo = (e) => {
+    parcels[Number(e.target.name)].no = e.target.value
+    setParcels([...parcels])
+    console.log(e.target.value, e.target.name)
+  }
+  const handleChangeWeight = (e) => {
+    parcels[Number(e.target.name)].weight = e.target.value
+    setParcels([...parcels])
+    console.log(e.target.value, e.target.name)
+  }
+  const handleChangeLength = (e) => {
+    parcels[Number(e.target.name)].length = e.target.value
+    setParcels([...parcels])
+    console.log(e.target.value, e.target.name)
+  }
+  const handleChangeWidth = (e) => {
+    parcels[Number(e.target.name)].width = e.target.value
+    setParcels([...parcels])
+    console.log(e.target.value, e.target.name)
+  }
+  const handleChangeHeight = (e) => {
+    parcels[Number(e.target.name)].height = e.target.value
+    setParcels([...parcels])
+    console.log(e.target.value, e.target.name)
+  }
+
   return (
     <>
       <RootStyle initial="initial" animate="animate" variants={varWrapEnter}>
@@ -213,45 +264,86 @@ export default function CustomQuote() {
               </PlacesAutocomplete>
             </motion.div>
 
-            <motion.div variants={varFadeInUp}>
-              <Grid container spacing={3}>
-                <Grid item md={2.4} xs={12}>
-                  <TextField
-                    label="No of items :"
-                    fullWidth
-                    type={'number'}
-                  />
-                </Grid>
-                <Grid item md={2.4} xs={12}>
-                  <TextField
-                    label="Weight :"
-                    fullWidth
-                    type={'number'}
-                  />
-                </Grid>
-                <Grid item md={2.4} xs={12}>
-                  <TextField
-                    label="Length :"
-                    fullWidth
-                    type={'number'}
-                  />
-                </Grid>
-                <Grid item md={2.4} xs={12}>
-                  <TextField
-                    label="Width :"
-                    fullWidth
-                    type={'number'}
-                  />
-                </Grid>
-                <Grid item md={2.4} xs={12}>
-                  <TextField
-                    label="Height :"
-                    fullWidth
-                    type={'number'}
-                  />
-                </Grid>
-              </Grid>
-            </motion.div>
+            {
+              parcels.map((parcel, index) => {
+                return (
+                  <Grid container spacing={1} key={index}>
+                    <Grid item md={3} xs={12}>
+                      <TextField
+                        value={parcel.no}
+                        onChange={handleChangeNo}
+                        label="No of Items:"
+                        fullWidth
+                        type={'number'}
+                        name={String(index)}
+                      />
+                    </Grid>
+                    <Grid item md={9} xs={12}>
+                      <Grid container spacing={1}>
+                        <Grid item md={2.4} xs={12}>
+                          <TextField
+                            value={parcel.weight}
+                            onChange={handleChangeWeight}
+                            label="Weight:"
+                            fullWidth
+                            type={'number'}
+                            name={String(index)}
+                          />
+                        </Grid>
+                        <Grid item md={2.4} xs={12}>
+                          <TextField
+                            value={parcel.length}
+                            onChange={handleChangeLength}
+                            label="Length:"
+                            fullWidth
+                            type={'number'}
+                            name={String(index)}
+                          />
+                        </Grid>
+                        <Grid item md={2.4} xs={12}>
+                          <TextField
+                            value={parcel.width}
+                            onChange={handleChangeWidth}
+                            label="Width"
+                            fullWidth
+                            type={'number'}
+                            name={String(index)}
+                          />
+                        </Grid>
+                        <Grid item md={2.4} xs={12}>
+                          <TextField
+                            value={parcel.height}
+                            onChange={handleChangeHeight}
+                            label="Height"
+                            fullWidth
+                            type={'number'}
+                            name={String(index)}
+                          />
+                        </Grid>
+                        <Grid item md={2.4} xs={12} sx={{ margin: 'auto' }}>
+                          <Stack direction="row" justifyContent={'center'} alignItems={'center'} spacing={1} sx={{ margin: 'auto' }}>
+                            <Button
+                              variant='outlined'
+                              sx={{ borderRadius: '50px' }}
+                              onClick={plusParcel}
+                            >
+                              +
+                            </Button>
+                            <Button
+                              variant='outlined'
+                              sx={{ borderRadius: '50px' }}
+                              onClick={() => minusParcel(index)}
+                            >
+                              -
+                            </Button>
+                          </Stack>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                )
+              })
+            }
 
             <motion.div variants={varFadeInUp}>
               <Grid container spacing={3}>
