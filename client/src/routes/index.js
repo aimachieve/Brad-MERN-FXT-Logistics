@@ -67,6 +67,7 @@ export default function Router() {
         { path: '/prohibited-restricted', element: <ProhibitedRestricted /> },
         { path: '/privacy-policy', element: <PrivacyPolicy /> },
         { path: '/quote', element: user && user.role === "admin" ? <QuoteAdmin /> : <Quote /> },
+        { path: '/select-service', element: <SelectService /> },
         { path: 'reset-password', element: <ResetPassword /> },
         { path: 'verify', element: <VerifyCode /> }
       ]
@@ -101,3 +102,4 @@ const ContactUs = Loadable(lazy(() => import('../pages/ContactUs')));
 const TermsConditions = Loadable(lazy(() => import('../pages/TermsConditions')));
 const ProhibitedRestricted = Loadable(lazy(() => import('../pages/ProhibitedRestricted')));
 const PrivacyPolicy = Loadable(lazy(() => import('../pages/PrivacyPolicy')));
+const SelectService = Loadable(lazy(() => import('../pages/SelectService')));

@@ -187,12 +187,12 @@ export default function QuoteAdmin() {
 
     parcels.map(parcel => {
       cubicMeterSum += parcel.no ?
-        parcel.length * parcel.width * parcel.height / 250 * parcel.no :
-        parcel.length * parcel.width * parcel.height / 250
+        (parcel.length / 100) * (parcel.width / 100) * (parcel.height / 100) * parcel.no :
+        (parcel.length / 100) * (parcel.width / 100) * (parcel.height / 100)
 
       cubicWeightSum += parcel.no ?
-        parcel.length * parcel.width * parcel.height / 4000 * parcel.no :
-        parcel.length * parcel.width * parcel.height / 4000
+        (parcel.length / 100) * (parcel.width / 100) * (parcel.height / 100) * 4000 * parcel.no :
+        (parcel.length / 100) * (parcel.width / 100) * (parcel.height / 100)
     })
 
     setCubicMeter(cubicMeterSum)

@@ -350,7 +350,7 @@ export default function Quote() {
             </Card>
 
             <motion.div variants={varFadeInUp}>
-              <Button variant='contained' sx={{ bgcolor: '#FDB900', width: '160px', marginLeft: '50% !important' }}>
+              <Button href="/select-service" variant='contained' sx={{ bgcolor: '#FDB900', width: '160px', marginLeft: '50% !important' }}>
                 Quote Me
               </Button>
             </motion.div>
