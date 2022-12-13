@@ -65,10 +65,10 @@ export default function MainFooter() {
           sx={{ textAlign: { xs: 'center', md: 'center' } }}
           spacing={5}
         >
-          {LINKS.map((list) => {
+          {LINKS.map((list, index) => {
             const { headline, children } = list;
             return (
-              <Grid item xs={12} md={4} spacing={2} justifyContent="space-between">
+              <Grid item xs={12} md={4} justifyContent="space-between" key={index}>
                 <Stack key={headline} spacing={2}>
                   <Typography
                     variant="overline"

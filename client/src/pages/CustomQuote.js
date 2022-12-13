@@ -1,9 +1,16 @@
-import React from 'react'
+import React from 'react';
+import emailjs from '@emailjs/browser';
 import { motion } from 'framer-motion';
+
 // material
 import { styled } from '@material-ui/core/styles';
 import { Button, Box, Link, Container, Typography, Stack, Select, MenuItem, TextField, Grid } from '@material-ui/core';
 import { varFadeIn, varFadeInUp, varWrapEnter, varFadeInRight, varFadeInLeft } from '../components/animate';
+// 
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from 'react-places-autocomplete';
 // ----------------------------------------------------------------------
 
 const RootStyle = styled(motion.div)(({ theme }) => ({
@@ -39,6 +46,45 @@ export default function CustomQuote() {
   const handleChange = (event) => {
     setGoods(event.target.value);
   };
+
+  const sendEmail = () => {
+    const params = {
+      from_to: "from_user",
+      message: "It is a test"
+    }
+    alert("you are sending")
+    emailjs.send('service_f98uf82', 'template_s7r5mu7', params, 'skJ99uNYGtya3y7Xq')
+      .then((result) => {
+        console.log(result.text);
+      }, (error) => {
+        console.log(error.text);
+      });
+  }
+
+  // Sender suburb
+  const [senderSuburb, setSenderSuburb] = React.useState('')
+  const handleChangeSender = (address) => {
+    setSenderSuburb(address)
+  }
+  const handleSelectSender = (address) => {
+    setSenderSuburb(address)
+  };
+
+  // Receiver suburb
+  const [receiverSuburb, setReceiverSuburb] = React.useState('')
+  const handleChangeReceiver = (address) => {
+    setReceiverSuburb(address)
+  }
+  const handleSelectReceiver = (address) => {
+    setReceiverSuburb(address)
+  };
+
+  const searchOptions = {
+    types: ['address'],
+    componentRestrictions: {
+      country: ['au'],
+    }
+  }
 
   return (
     <>
@@ -77,43 +123,95 @@ export default function CustomQuote() {
               </MenuItem>
             </TextField>
 
-            <Grid container spacing={1}>
-              <Grid item md={6} xs={12}>
-                <motion.div variants={varFadeInLeft}>
-                  <TextField
-                    label="Collection Suburb"
-                    fullWidth
-                  />
-                </motion.div>
-              </Grid>
-              <Grid item md={6} xs={12}>
-                <motion.div variants={varFadeInRight}>
-                  <TextField
-                    label="Collection postcode"
-                    fullWidth
-                  />
-                </motion.div>
-              </Grid>
-            </Grid>
+            <motion.div variants={varFadeInLeft}>
+              <PlacesAutocomplete
+                value={senderSuburb}
+                onChange={handleChangeSender}
+                onSelect={handleSelectSender}
+                highlightFirstSuggestion={true}
+                searchOptions={searchOptions}
+              >
+                {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                  <div>
+                    <TextField
+                      fullWidth
+                      {...getInputProps({
+                        placeholder: 'Collection Suburb or Post code:',
+                        className: 'location-search-input',
+                      })}
+                    />
+                    <div className="autocomplete-dropdown-container">
+                      {loading && <div>Loading...</div>}
+                      {suggestions.map((suggestion, index) => {
+                        const className = suggestion.active
+                          ? 'suggestion-item--active'
+                          : 'suggestion-item';
+                        // inline style for demonstration purpose
+                        const style = suggestion.active
+                          ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                          : { backgroundColor: '#ffffff', cursor: 'pointer' };
+                        return (
+                          <div
+                            key={index}
+                            {...getSuggestionItemProps(suggestion, {
+                              className,
+                              style,
+                            })}
+                          >
+                            <span>{suggestion.description}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </PlacesAutocomplete>
+            </motion.div>
 
-            <Grid container spacing={1}>
-              <Grid item md={6} xs={12}>
-                <motion.div variants={varFadeInLeft}>
-                  <TextField
-                    label="Delivery Suburb"
-                    fullWidth
-                  />
-                </motion.div>
-              </Grid>
-              <Grid item md={6} xs={12}>
-                <motion.div variants={varFadeInRight}>
-                  <TextField
-                    label="Delivery postcode"
-                    fullWidth
-                  />
-                </motion.div>
-              </Grid>
-            </Grid>
+            <motion.div variants={varFadeInLeft}>
+              <PlacesAutocomplete
+                value={receiverSuburb}
+                onChange={handleChangeReceiver}
+                onSelect={handleSelectReceiver}
+                highlightFirstSuggestion={true}
+                searchOptions={searchOptions}
+              >
+                {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                  <div>
+                    <TextField
+                      fullWidth
+                      {...getInputProps({
+                        placeholder: 'Delivery Suburb or Post code:',
+                        // className: 'location-search-input',
+                      })}
+                    />
+                    <div className="autocomplete-dropdown-container">
+                      {loading && <div>Loading...</div>}
+                      {suggestions.map((suggestion, index) => {
+                        const className = suggestion.active
+                          ? 'suggestion-item--active'
+                          : 'suggestion-item';
+                        // inline style for demonstration purpose
+                        const style = suggestion.active
+                          ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                          : { backgroundColor: '#ffffff', cursor: 'pointer' };
+                        return (
+                          <div
+                            key={index}
+                            {...getSuggestionItemProps(suggestion, {
+                              className,
+                              style,
+                            })}
+                          >
+                            <span>{suggestion.description}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </PlacesAutocomplete>
+            </motion.div>
 
             <motion.div variants={varFadeInUp}>
               <Grid container spacing={3}>
@@ -174,7 +272,7 @@ export default function CustomQuote() {
             </motion.div>
 
             <motion.div variants={varFadeInUp}>
-              <Button variant='contained' sx={{ bgcolor: '#FDB900', width: '80px', marginLeft: '50% !important' }}>
+              <Button onClick={sendEmail} variant='contained' sx={{ bgcolor: '#FDB900', width: '80px', marginLeft: '50% !important' }}>
                 Submit
               </Button>
             </motion.div>

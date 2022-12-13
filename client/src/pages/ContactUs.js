@@ -33,7 +33,7 @@ const ContentStyle = styled((props) => <Stack spacing={5} {...props} />)(({ them
 
 // ----------------------------------------------------------------------
 
-export default function CustomQuote() {
+export default function ContactUs() {
   const [reason, setReason] = React.useState('none');
 
   const handleChange = (event) => {

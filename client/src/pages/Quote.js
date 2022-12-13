@@ -4,6 +4,11 @@ import { motion } from 'framer-motion';
 import { styled } from '@material-ui/core/styles';
 import { Button, Box, Link, Container, Typography, Stack, Select, Card, CardContent, MenuItem, TextField, Grid, Divider } from '@material-ui/core';
 import { varFadeIn, varFadeInUp, varWrapEnter, varFadeInRight, varFadeInLeft } from '../components/animate';
+// 
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from 'react-places-autocomplete';
 // ----------------------------------------------------------------------
 
 const RootStyle = styled(motion.div)(({ theme }) => ({
@@ -33,7 +38,7 @@ const ContentStyle = styled((props) => <Stack spacing={5} {...props} />)(({ them
 
 // ----------------------------------------------------------------------
 
-export default function CustomQuote() {
+export default function Quote() {
   const [collect, setCollect] = React.useState('uk-mainland');
   const [delivery, setDelivery] = React.useState('uk-mainland');
 
@@ -43,6 +48,31 @@ export default function CustomQuote() {
   const handleChangeDelivery = (event) => {
     setDelivery(event.target.value);
   };
+
+  // Sender suburb
+  const [senderSuburb, setSenderSuburb] = React.useState('')
+  const handleChangeSender = (address) => {
+    setSenderSuburb(address)
+  }
+  const handleSelectSender = (address) => {
+    setSenderSuburb(address)
+  };
+
+  // Receiver suburb
+  const [receiverSuburb, setReceiverSuburb] = React.useState('')
+  const handleChangeReceiver = (address) => {
+    setReceiverSuburb(address)
+  }
+  const handleSelectReceiver = (address) => {
+    setReceiverSuburb(address)
+  };
+
+  const searchOptions = {
+    types: ['address'],
+    componentRestrictions: {
+      country: ['au'],
+    }
+  }
 
   return (
     <>
@@ -79,35 +109,56 @@ export default function CustomQuote() {
                           fullWidth
                         >
                           <MenuItem value="uk-mainland">
-                            UK Mainland
-                          </MenuItem>
-                          <MenuItem value="query">
-                            UK-Isle Of Wight
-                          </MenuItem>
-                          <MenuItem value="package">
-                            UK - Highlands & Islands
-                          </MenuItem>
-                          <MenuItem value="missed">
-                            UK- Northern Ireland
-                          </MenuItem>
-                          <MenuItem value="none" style={{ backgroundColor: '#f5f5f5', height: '25px', color: '#707070', cursor: 'default' }}>
-                            Worldwide
-                          </MenuItem>
-                          <MenuItem value="package">
-                            Afghanistan
-                          </MenuItem>
-                          <MenuItem value="missed">
-                            Albania
+                            Australia
                           </MenuItem>
                         </TextField>
                       </motion.div>
                     </Grid>
                     <Grid item md={6} xs={12}>
                       <motion.div variants={varFadeInLeft}>
-                        <TextField
-                          label="Collection Postcode (optional)"
-                          fullWidth
-                        />
+
+                        <PlacesAutocomplete
+                          value={senderSuburb}
+                          onChange={handleChangeSender}
+                          onSelect={handleSelectSender}
+                          highlightFirstSuggestion={true}
+                          searchOptions={searchOptions}
+                        >
+                          {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                            <div>
+                              <TextField
+                                fullWidth
+                                {...getInputProps({
+                                  placeholder: 'Collection Suburb or Post code:',
+                                  className: 'location-search-input',
+                                })}
+                              />
+                              <div className="autocomplete-dropdown-container">
+                                {loading && <div>Loading...</div>}
+                                {suggestions.map((suggestion, index) => {
+                                  const className = suggestion.active
+                                    ? 'suggestion-item--active'
+                                    : 'suggestion-item';
+                                  // inline style for demonstration purpose
+                                  const style = suggestion.active
+                                    ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                                    : { backgroundColor: '#ffffff', cursor: 'pointer' };
+                                  return (
+                                    <div
+                                      key={index}
+                                      {...getSuggestionItemProps(suggestion, {
+                                        className,
+                                        style,
+                                      })}
+                                    >
+                                      <span>{suggestion.description}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+                        </PlacesAutocomplete>
                       </motion.div>
                     </Grid>
                   </Grid>
@@ -126,35 +177,55 @@ export default function CustomQuote() {
                           fullWidth
                         >
                           <MenuItem value="uk-mainland">
-                            UK Mainland
-                          </MenuItem>
-                          <MenuItem value="query">
-                            UK-Isle Of Wight
-                          </MenuItem>
-                          <MenuItem value="package">
-                            UK - Highlands & Islands
-                          </MenuItem>
-                          <MenuItem value="missed">
-                            UK- Northern Ireland
-                          </MenuItem>
-                          <MenuItem value="none" style={{ backgroundColor: '#f5f5f5', height: '25px', color: '#707070', cursor: 'default' }}>
-                            Worldwide
-                          </MenuItem>
-                          <MenuItem value="package">
-                            Afghanistan
-                          </MenuItem>
-                          <MenuItem value="missed">
-                            Albania
+                            Australia
                           </MenuItem>
                         </TextField>
                       </motion.div>
                     </Grid>
                     <Grid item md={6} xs={12}>
                       <motion.div variants={varFadeInLeft}>
-                        <TextField
-                          label="Delivery Postcode (optional)"
-                          fullWidth
-                        />
+                        <PlacesAutocomplete
+                          value={receiverSuburb}
+                          onChange={handleChangeReceiver}
+                          onSelect={handleSelectReceiver}
+                          highlightFirstSuggestion={true}
+                          searchOptions={searchOptions}
+                        >
+                          {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                            <div>
+                              <TextField
+                                fullWidth
+                                {...getInputProps({
+                                  placeholder: 'Delivery Suburb or Post code:',
+                                  // className: 'location-search-input',
+                                })}
+                              />
+                              <div className="autocomplete-dropdown-container">
+                                {loading && <div>Loading...</div>}
+                                {suggestions.map((suggestion, index) => {
+                                  const className = suggestion.active
+                                    ? 'suggestion-item--active'
+                                    : 'suggestion-item';
+                                  // inline style for demonstration purpose
+                                  const style = suggestion.active
+                                    ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                                    : { backgroundColor: '#ffffff', cursor: 'pointer' };
+                                  return (
+                                    <div
+                                      key={index}
+                                      {...getSuggestionItemProps(suggestion, {
+                                        className,
+                                        style,
+                                      })}
+                                    >
+                                      <span>{suggestion.description}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+                        </PlacesAutocomplete>
                       </motion.div>
                     </Grid>
                   </Grid>

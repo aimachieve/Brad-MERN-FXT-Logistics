@@ -4,6 +4,11 @@ import { motion } from 'framer-motion';
 import { styled } from '@material-ui/core/styles';
 import { Button, Box, Link, Container, Typography, Stack, Select, Card, CardContent, MenuItem, TextField, Grid, Switch, FormControlLabel } from '@material-ui/core';
 import { varFadeIn, varFadeInUp, varWrapEnter, varFadeInRight, varFadeInLeft } from '../components/animate';
+// 
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from 'react-places-autocomplete';
 // ----------------------------------------------------------------------
 
 const RootStyle = styled(motion.div)(({ theme }) => ({
@@ -34,22 +39,92 @@ const ContentStyle = styled((props) => <Stack spacing={5} {...props} />)(({ them
 // ----------------------------------------------------------------------
 
 export default function QuoteAdmin() {
-  const [collect, setCollect] = React.useState('uk-mainland');
-  const [delivery, setDelivery] = React.useState('uk-mainland');
-
-  const handleChangeCollect = (event) => {
-    setCollect(event.target.value);
-  };
-  const handleChangeDelivery = (event) => {
-    setDelivery(event.target.value);
+  // Select country
+  const [senderCountry, setSenderCountry] = React.useState('au');
+  const selectSenderCountry = (event) => {
+    setSenderCountry(event.target.value);
   };
 
-  const [checked, setChecked] = React.useState(false);
-
-  const handleChange = (event) => {
-    setChecked(event.target.checked);
+  const [receiverCountry, setReceiverCountry] = React.useState('au');
+  const selectReceiverCountry = (event) => {
+    setReceiverCountry(event.target.value);
   };
 
+  // Select commercial or residental
+  const [senderC, setSenderC] = React.useState(false);
+  const handleSenderC = (event) => {
+    setSenderC(event.target.checked);
+  };
+
+  const [senderR, setSenderR] = React.useState(false);
+  const handleSenderR = (event) => {
+    setSenderR(event.target.checked);
+  };
+
+  const [receiverC, setReceiverC] = React.useState(false);
+  const handleReceiverC = (event) => {
+    setReceiverC(event.target.checked);
+  };
+
+  const [receiverR, setReceiverR] = React.useState(false);
+  const handleReceiverR = (event) => {
+    setReceiverR(event.target.checked);
+  };
+
+  // Select addreess for sender suburb
+  const [senderState, setSenderState] = React.useState('')
+  const [senderPcode, setSenderPcode] = React.useState('')
+  const [senderSuburb, setSenderSuburb] = React.useState('')
+  const handleChangeSender = (address) => {
+    console.log({ address })
+    setSenderSuburb(address)
+  }
+  const handleSelectSender = (address) => {
+    setSenderSuburb(address)
+
+    geocodeByAddress(address)
+      .then(results => {
+        results[0].address_components.map(add => {
+          if (add.types.includes('postal_code'))
+            setSenderState(add.long_name)
+
+          if (add.types.includes('locality'))
+            setSenderPcode(add.long_name)
+        })
+      })
+      .catch(error => console.error('Error', error));
+  };
+
+  // Select addreess for sender suburb
+  const [receiverState, setReceiverState] = React.useState('')
+  const [receiverPcode, setReceiverPcode] = React.useState('')
+  const [receiverSuburb, setReceiverSuburb] = React.useState('')
+  const handleChangeReceiver = (address) => {
+    console.log({ address })
+    setReceiverSuburb(address)
+  }
+  const handleSelectReceiver = (address) => {
+    setReceiverSuburb(address)
+
+    geocodeByAddress(address)
+      .then(results => {
+        results[0].address_components.map(add => {
+          if (add.types.includes('postal_code'))
+            setReceiverState(add.long_name)
+
+          if (add.types.includes('locality'))
+            setReceiverPcode(add.long_name)
+        })
+      })
+      .catch(error => console.error('Error', error));
+  };
+
+  const searchOptions = {
+    types: ['address'],
+    componentRestrictions: {
+      country: ['au'],
+    }
+  }
 
   return (
     <>
@@ -78,8 +153,8 @@ export default function QuoteAdmin() {
                       <TextField
                         select
                         label="Sender country"
-                        value={collect}
-                        onChange={handleChangeCollect}
+                        value={senderCountry}
+                        onChange={selectSenderCountry}
                         fullWidth
                       >
                         <MenuItem value="uk-mainland">
@@ -89,17 +164,54 @@ export default function QuoteAdmin() {
                     </Grid>
                     <Grid item md={3} xs={12}>
                       <Stack spacing={2}>
-                        <TextField
-                          label="Sender Suburb:"
-                          fullWidth
-                        />
+                        <PlacesAutocomplete
+                          value={senderSuburb}
+                          onChange={handleChangeSender}
+                          onSelect={handleSelectSender}
+                          highlightFirstSuggestion={true}
+                          searchOptions={searchOptions}
+                        >
+                          {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                            <div>
+                              <TextField
+                                fullWidth
+                                {...getInputProps({
+                                  placeholder: 'Sender Suburb:',
+                                  className: 'location-search-input',
+                                })}
+                              />
+                              <div className="autocomplete-dropdown-container">
+                                {loading && <div>Loading...</div>}
+                                {suggestions.map((suggestion, index) => {
+                                  const className = suggestion.active
+                                    ? 'suggestion-item--active'
+                                    : 'suggestion-item';
+                                  // inline style for demonstration purpose
+                                  const style = suggestion.active
+                                    ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                                    : { backgroundColor: '#ffffff', cursor: 'pointer' };
+                                  return (
+                                    <div
+                                      key={index}
+                                      {...getSuggestionItemProps(suggestion, {
+                                        className,
+                                        style,
+                                      })}
+                                    >
+                                      <span>{suggestion.description}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+                        </PlacesAutocomplete>
                         <FormControlLabel
                           control={
                             <Switch
-                              checked={checked}
-                              onChange={handleChange}
+                              checked={senderC}
+                              onChange={handleSenderC}
                               inputProps={{ 'aria-label': 'controlled' }}
-                              name="Commercial"
                             />
                           }
                           label="Commercial"
@@ -109,24 +221,25 @@ export default function QuoteAdmin() {
                     <Grid item md={3} xs={12}>
                       <Stack spacing={2}>
                         <TextField
+                          value={senderState}
                           label="Sender State Code:"
                           fullWidth
                         />
                         <FormControlLabel
                           control={
                             <Switch
-                              checked={checked}
-                              onChange={handleChange}
+                              checked={senderR}
+                              onChange={handleSenderR}
                               inputProps={{ 'aria-label': 'controlled' }}
-                              name="D"
                             />
                           }
-                          label="Commercial"
+                          label="Residental"
                         />
                       </Stack>
                     </Grid>
                     <Grid item md={3} xs={12}>
                       <TextField
+                        value={senderPcode}
                         label="Sender Post Code"
                         fullWidth
                       />
@@ -138,8 +251,8 @@ export default function QuoteAdmin() {
                       <TextField
                         select
                         label="Receiver country"
-                        value={collect}
-                        onChange={handleChangeCollect}
+                        value={receiverCountry}
+                        onChange={selectReceiverCountry}
                         fullWidth
                       >
                         <MenuItem value="uk-mainland">
@@ -149,17 +262,54 @@ export default function QuoteAdmin() {
                     </Grid>
                     <Grid item md={3} xs={12}>
                       <Stack spacing={2}>
-                        <TextField
-                          label="Receiver Suburb:"
-                          fullWidth
-                        />
+                        <PlacesAutocomplete
+                          value={receiverSuburb}
+                          onChange={handleChangeReceiver}
+                          onSelect={handleSelectReceiver}
+                          highlightFirstSuggestion={true}
+                          searchOptions={searchOptions}
+                        >
+                          {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                            <div>
+                              <TextField
+                                fullWidth
+                                {...getInputProps({
+                                  placeholder: 'Receiver Suburb:',
+                                  // className: 'location-search-input',
+                                })}
+                              />
+                              <div className="autocomplete-dropdown-container">
+                                {loading && <div>Loading...</div>}
+                                {suggestions.map((suggestion, index) => {
+                                  const className = suggestion.active
+                                    ? 'suggestion-item--active'
+                                    : 'suggestion-item';
+                                  // inline style for demonstration purpose
+                                  const style = suggestion.active
+                                    ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                                    : { backgroundColor: '#ffffff', cursor: 'pointer' };
+                                  return (
+                                    <div
+                                      key={index}
+                                      {...getSuggestionItemProps(suggestion, {
+                                        className,
+                                        style,
+                                      })}
+                                    >
+                                      <span>{suggestion.description}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+                        </PlacesAutocomplete>
                         <FormControlLabel
                           control={
                             <Switch
-                              checked={checked}
-                              onChange={handleChange}
+                              checked={receiverC}
+                              onChange={handleReceiverC}
                               inputProps={{ 'aria-label': 'controlled' }}
-                              name="Commercial"
                             />
                           }
                           label="Commercial"
@@ -167,27 +317,27 @@ export default function QuoteAdmin() {
                       </Stack>
                     </Grid>
                     <Grid item md={3} xs={12}>
-
                       <Stack spacing={2}>
                         <TextField
+                          value={receiverState}
                           label="Receiver State Code:"
                           fullWidth
                         />
                         <FormControlLabel
                           control={
                             <Switch
-                              checked={checked}
-                              onChange={handleChange}
+                              checked={receiverR}
+                              onChange={handleReceiverR}
                               inputProps={{ 'aria-label': 'controlled' }}
-                              name="Commercial"
                             />
                           }
-                          label="Commercial"
+                          label="Residental"
                         />
                       </Stack>
                     </Grid>
                     <Grid item md={3} xs={12}>
                       <TextField
+                        value={receiverPcode}
                         label="Receiver Post Code"
                         fullWidth
                       />
