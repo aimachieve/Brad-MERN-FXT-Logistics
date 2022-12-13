@@ -74,6 +74,51 @@ export default function Quote() {
     }
   }
 
+  // parcel details
+  const [parcels, setParcels] = React.useState([
+    {
+      weight: '',
+      length: '',
+      width: '',
+      height: ''
+    }
+  ])
+
+  const plusParcel = () => {
+    setParcels([...parcels, {
+      weight: '',
+      length: '',
+      width: '',
+      height: ''
+    }])
+    console.log({ parcels })
+  }
+  const minusParcel = (index) => {
+    parcels.splice(index, 1)
+    setParcels([...parcels])
+  }
+
+  const handleChangeWeight = (e) => {
+    parcels[Number(e.target.name)].weight = e.target.value
+    setParcels([...parcels])
+    console.log(e.target.value, e.target.name)
+  }
+  const handleChangeLength = (e) => {
+    parcels[Number(e.target.name)].length = e.target.value
+    setParcels([...parcels])
+    console.log(e.target.value, e.target.name)
+  }
+  const handleChangeWidth = (e) => {
+    parcels[Number(e.target.name)].width = e.target.value
+    setParcels([...parcels])
+    console.log(e.target.value, e.target.name)
+  }
+  const handleChangeHeight = (e) => {
+    parcels[Number(e.target.name)].height = e.target.value
+    setParcels([...parcels])
+    console.log(e.target.value, e.target.name)
+  }
+
   return (
     <>
       <RootStyle initial="initial" animate="animate" variants={varWrapEnter}>
@@ -233,37 +278,73 @@ export default function Quote() {
                   <Typography sx={{ color: '#7A7A7A', fontSize: '25px' }}>
                     Parcel details...
                   </Typography>
-                  <Grid container spacing={1}>
-                    <Grid item md={4} xs={12}>
-                      <motion.div variants={varFadeInLeft}>
-                        <Stack spacing={3} direction="row" alignItems="center">
-                          <Typography sx={{ color: '#7A7A7A', fontSize: '20px' }}>
-                            Parcel1
-                          </Typography>
-                          <TextField
-                            label="Weight"
-                          />
-                          <Button variant='contained'>kg</Button>
-                        </Stack>
-                      </motion.div>
-                    </Grid>
-                    <Grid item md={8} xs={12}>
-                      <motion.div variants={varFadeInRight}>
-                        <Stack spacing={3} direction="row" alignItems="center">
-                          <TextField
-                            label="Length"
-                          />
-                          <TextField
-                            label="Width"
-                          />
-                          <TextField
-                            label="Height"
-                          />
-                          <Button variant='contained'>cm</Button>
-                        </Stack>
-                      </motion.div>
-                    </Grid>
-                  </Grid>
+                  {
+                    parcels.map((parcel, index) => {
+                      return (
+                        <Grid container spacing={1} key={index}>
+                          <Grid item md={4} xs={12}>
+                            <motion.div variants={varFadeInLeft}>
+                              <Stack spacing={3} direction="row" alignItems="center">
+                                <Typography sx={{ color: '#7A7A7A', fontSize: '20px' }}>
+                                  {`Parcel${index + 1}`}
+                                </Typography>
+                                <TextField
+                                  value={parcel.weight}
+                                  label="Weight"
+                                  onChange={handleChangeWeight}
+                                  type={'number'}
+                                  name={String(index)}
+                                />
+                                <Button variant='contained'>kg</Button>
+                              </Stack>
+                            </motion.div>
+                          </Grid>
+                          <Grid item md={8} xs={12}>
+                            <motion.div variants={varFadeInRight}>
+                              <Stack spacing={3} direction="row" alignItems="center">
+                                <TextField
+                                  value={parcel.length}
+                                  onChange={handleChangeLength}
+                                  label="Length"
+                                  type={'number'}
+                                  name={String(index)}
+                                />
+                                <TextField
+                                  value={parcel.width}
+                                  onChange={handleChangeWidth}
+                                  label="Width"
+                                  type={'number'}
+                                  name={String(index)}
+                                />
+                                <TextField
+                                  value={parcel.height}
+                                  onChange={handleChangeHeight}
+                                  label="Height"
+                                  type={'number'}
+                                  name={String(index)}
+                                />
+                                <Button variant='contained'>cm</Button>
+                                <Button
+                                  variant='outlined'
+                                  sx={{ borderRadius: '50px' }}
+                                  onClick={plusParcel}
+                                >
+                                  +
+                                </Button>
+                                <Button
+                                  variant='outlined'
+                                  sx={{ borderRadius: '50px' }}
+                                  onClick={() => minusParcel(index)}
+                                >
+                                  -
+                                </Button>
+                              </Stack>
+                            </motion.div>
+                          </Grid>
+                        </Grid>
+                      )
+                    })
+                  }
                 </Stack>
               </CardContent>
             </Card>

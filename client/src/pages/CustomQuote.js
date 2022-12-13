@@ -219,30 +219,35 @@ export default function CustomQuote() {
                   <TextField
                     label="No of items :"
                     fullWidth
+                    type={'number'}
                   />
                 </Grid>
                 <Grid item md={2.4} xs={12}>
                   <TextField
                     label="Weight :"
                     fullWidth
+                    type={'number'}
                   />
                 </Grid>
                 <Grid item md={2.4} xs={12}>
                   <TextField
                     label="Length :"
                     fullWidth
+                    type={'number'}
                   />
                 </Grid>
                 <Grid item md={2.4} xs={12}>
                   <TextField
                     label="Width :"
                     fullWidth
+                    type={'number'}
                   />
                 </Grid>
                 <Grid item md={2.4} xs={12}>
                   <TextField
                     label="Height :"
                     fullWidth
+                    type={'number'}
                   />
                 </Grid>
               </Grid>
