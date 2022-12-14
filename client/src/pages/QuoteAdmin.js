@@ -192,7 +192,7 @@ export default function QuoteAdmin() {
 
       cubicWeightSum += parcel.no ?
         (parcel.length / 100) * (parcel.width / 100) * (parcel.height / 100) / 4000 * parcel.no :
-        (parcel.length / 100) * (parcel.width / 100) * (parcel.height / 100)
+        (parcel.length / 100) * (parcel.width / 100) * (parcel.height / 100) / 4000
     })
 
     setCubicMeter(cubicMeterSum)
